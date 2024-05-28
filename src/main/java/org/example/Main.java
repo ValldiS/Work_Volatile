@@ -20,69 +20,47 @@ public class Main {
             texts[i] = generateText("abc", 3 + random.nextInt(3));
         }
 
-        List<Thread> threads = new ArrayList<>();
 
-        for (String name : texts) {
-            Thread thread1 =new Thread(() -> {
+
+
+        Thread threadFindBeautifulNic = new Thread(() -> {
+            for (String name : texts) {
                 boolean answer = beautifulNic(name);
-                if (answer) {
-                    if (name.length() == 3) {
-                        countTreeLength.getAndIncrement();
-                    }
-                    if (name.length() == 4) {
-                        countFourLength.getAndIncrement();
-                    }
-                    if (name.length() == 5) {
-                        countFiveLength.getAndIncrement();
-                    }
-                }
-            });
-            threads.add(thread1);
+                getIncrement(answer,name);
+            }
+        });
+        threadFindBeautifulNic.start();
 
 
-            Thread thread2 = new Thread(() -> {
+        Thread threadIdenticalLetters = new Thread(() -> {
+            for (String name : texts) {
                 boolean answer = identicalLetters(name);
-                if (answer) {
-                    if (name.length() == 3) {
-                        countTreeLength.getAndIncrement();
-                    }
-                    if (name.length() == 4) {
-                        countFourLength.getAndIncrement();
-                    }
-                    if (name.length() == 5) {
-                        countFiveLength.getAndIncrement();
-                    }
-                }
-            });
-            threads.add(thread2);
+                getIncrement(answer,name);
+            }
+        });
+        threadIdenticalLetters.start();
 
-            Thread thread3 = new Thread(() -> {
+        Thread threadFindIsPalindrome = new Thread(() -> {
+            for (String name : texts) {
                 boolean answer = isPalindrome(name);
-                if (answer) {
-                    if (name.length() == 3) {
-                        countTreeLength.getAndIncrement();
-                    }
-                    if (name.length() == 4) {
-                        countFourLength.getAndIncrement();
-                    }
-                    if (name.length() == 5) {
-                        countFiveLength.getAndIncrement();
-                    }
-                }
-            });
-            threads.add(thread3);
-        }
-        for (Thread thread : threads){
-            thread.start();
-            thread.join();
-        }
+                getIncrement(answer,name);
+            }
+        });
+        threadFindIsPalindrome.start();
 
-        System.out.println("Красивых слов с длиной 3 " + countTreeLength +" шт");
-        System.out.println("Красивых слов с длиной 4 " + countFourLength +" шт");
-        System.out.println("Красивых слов с длиной 5 " + countFiveLength +" шт");
+        threadFindBeautifulNic.join();
+        threadIdenticalLetters.join();
+        threadFindIsPalindrome.join();
+
+
+
+        System.out.println("Красивых слов с длиной 3 " + countTreeLength + " шт");
+        System.out.println("Красивых слов с длиной 4 " + countFourLength + " шт");
+        System.out.println("Красивых слов с длиной 5 " + countFiveLength + " шт");
 
 
     }
+
 
     public static String generateText(String letters, int length) {
         Random random = new Random();
@@ -149,5 +127,19 @@ public class Main {
         String left = builder.substring(0, builder.length() / 2 + 1);
         String right = builder.reverse().substring(0, builder.length() / 2 + 1);
         return answer = (left.equals(right)) ? true : false;
+    }
+
+    public static void getIncrement(boolean answer, String name) {
+        if (answer) {
+            if (name.length() == 3) {
+                countTreeLength.getAndIncrement();
+            }
+            if (name.length() == 4) {
+                countFourLength.getAndIncrement();
+            }
+            if (name.length() == 5) {
+                countFiveLength.getAndIncrement();
+            }
+        }
     }
 }
